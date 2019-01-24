@@ -1,12 +1,21 @@
 
-lightargs is a lightweigth easy-to-use arguments manager for Python 2.7 and 3.
+# What is it
+
+lightargs is a lightweigth easy-to-use arguments manager for Python 2.7 and 3. It has very limited functionalities, but is trivial to use.
+
+# Installation
+
+```bash
+pip install lightargs
+```
+
+# Usage
 
 See example.py for usage.
 
 In short, in a hello_world.py file:
 
 ```python
-
 
 import lightargs
 import sys
@@ -22,10 +31,10 @@ def hello_world(name):
 
 # telling the program to call the hello_world function if "hello_world" passed as argument
 lightargs.add("hello_world", # argument name
-              hello_world, # function to be called
+              hello_world, # function to be called of hello_world passed as argument
               nb_args=1, # function hello world takes 1 argument
               defaults=(None) # will be used as default argument
-              man="print hello world" # explains wth function A does
+              man="print hello world" # explains what function 'hello_world' does
               category="basic" # used for documentation)
     
 if __name__ == "__main__":
