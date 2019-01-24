@@ -1,5 +1,5 @@
-from _unknown_argument import UnknownArgument
-from _wrong_parameters import WrongParameters
+from .unknown_argument import UnknownArgument
+from .wrong_parameters import WrongParameters
 
 
 

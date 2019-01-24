@@ -1,4 +1,4 @@
-from _argument import _Argument
+from .argument import _Argument
 
 try :
     import lightcoloring
@@ -12,8 +12,8 @@ except :
 import os
 import traceback
 
-from _unknown_argument import UnknownArgument
-from _wrong_parameters import WrongParameters
+from .unknown_argument import UnknownArgument
+from .wrong_parameters import WrongParameters
 
 
 def _print(prefix,what,suffix,modes):
@@ -21,7 +21,7 @@ def _print(prefix,what,suffix,modes):
     global _COLORING
     
     if _COLORING is None:
-        print prefix+what+suffix
+        print (prefix+what+suffix)
         return
 
     def _get_colored_string(what,modes):
@@ -32,7 +32,7 @@ def _print(prefix,what,suffix,modes):
 
     what = _get_colored_string(what,modes)
     
-    print prefix+what+suffix
+    print (prefix+what+suffix)
     
 
 
@@ -54,7 +54,7 @@ def print_help():
     
     if _USAGE:
 
-        print "\n" + _USAGE + "\n"
+        print ("\n" + _USAGE + "\n")
 
     categories = set( [argument.category for argument in _ARGUMENTS.values()] )
     categories = sorted(categories)

@@ -4,22 +4,22 @@ import sys
 
 def _doA(a1,a2):
 
-    print "A:",a1,a2
+    print ("A:",a1,a2)
 
     
 def _doB(b1,b2,b3):
 
-    print "B:",b1,b2,b3
+    print ("B:",b1,b2,b3)
 
     
 def _sum(value1,value2):
 
-    print "sum:",float(value1)+float(value2)
+    print ("sum:",float(value1)+float(value2))
 
     
 def _hidden():
 
-    print "called hidden function !"
+    print ("called hidden function !")
     
 
 lightargs.set_usage("welcome to lightargs example !")
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     try:
         lightargs.execute(sys.argv[1:])
     except lightargs.WrongParameters as e:
-        print str(e)
+        print (str(e))
     except lightargs.UnknownArgument as e:
-        print str(e)
+        print (str(e))
 
