@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup( name='lightargs',
-       version='1.0',
+       version='1.1',
        description='simple arguments manager for python',
        classifiers=[
            'License :: OSI Approved :: MIT License',
