@@ -10,10 +10,11 @@ class _Argument:
                  command,
                  function,
                  nb_args=0,
-                 args_label=None,
+                 args_labels=None,
                  defaults=None,
                  man="",
                  category=None):
+
 
         if defaults is not None and len(defaults) > nb_args:
             raise Exception(
@@ -26,9 +27,8 @@ class _Argument:
         self._defaults = defaults
         self.man = man
         self.category = category
-        self.args_label = args_label
+        self.args_labels = args_labels
 
-        
     def min_nb_arguments(self):
 
         if self._defaults is None:

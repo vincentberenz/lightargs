@@ -1,4 +1,7 @@
+# PYTHON_ARGCOMPLETE_OK
+
 from .argument import _Argument
+
 
 try :
     import lightcoloring
@@ -11,6 +14,7 @@ except :
 
 import os
 import traceback
+import argcomplete, argparse
 
 from .unknown_argument import UnknownArgument
 from .wrong_parameters import WrongParameters
@@ -39,6 +43,21 @@ def _print(prefix,what,suffix,modes):
 _ARGUMENTS = {}
 _USAGE = ""
 _HIDDEN = "hidden"
+
+# for autocompletion
+_PARSER = None
+
+
+def enable_autocompletion():
+    global _PARSER
+    _PARSER = argparse.ArgumentParser() 
+
+    
+def autocomplete():
+    global _PARSER
+    if _PARSER is None:
+        raise Exception("lightargs: attempting to call autocomplete without previous call to enable_autocompletion")
+    argcomplete.autocomplete(_PARSER)
 
 
 def set_usage(usage):
@@ -75,8 +94,8 @@ def print_help():
 
             arguments_list = ""
             for argument in arguments:
-                if argument.args_label:
-                    arguments_list = " " + " ".join(argument.args_label)
+                if argument.args_labels:
+                    arguments_list = " " + " ".join(argument.args_labels)
                 else:
                     arguments_list = ""
 
@@ -94,25 +113,44 @@ def print_help():
 def add( command,
          function,
          nb_args=0,
-         args_label=None,
+         args_labels=None,
          defaults=None,
          man="",
-         category=None ):
+         category=None,
+         autocompletion=None ):
 
     global _ARGUMENTS
+    global _PARSER
     
     if command in _ARGUMENTS:
         raise Exception(command + " added more than once")
 
     _ARGUMENTS[command] = _Argument( command,
-                                    function,
-                                    nb_args=nb_args,
-                                    args_label=args_label,
-                                    defaults=defaults,
-                                    man=man,
-                                    category=category)
-
+                                     function,
+                                     nb_args=nb_args,
+                                     args_labels=args_labels,
+                                     defaults=defaults,
+                                     man=man,
+                                     category=category )
     
+    if autocompletion is not None and _PARSER is not None :
+
+        def get_autocompletion(prefix,parsed_args,**kwargs):
+            return autocompletion
+
+        _PARSER.add_argument(command).completer = get_autocompletion
+
+    elif _PARSER is not None:
+
+        # allows the command to be autocompleted (even if command
+        # does not take any follow up arguments)
+        
+        def no_autocompletion(prefix,parsed_args,**kwargs):
+            return []
+
+        _PARSER.add_argument(command).completer = no_autocompletion
+        
+
 def execute(args):
 
     global _ARGUMENTS
