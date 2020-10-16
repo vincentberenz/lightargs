@@ -1,5 +1,7 @@
 # PYTHON_ARGCOMPLETE_OK
 
+from .bright_args import BrightArgs,Set,Range
+
 from .argument import _Argument
 
 
