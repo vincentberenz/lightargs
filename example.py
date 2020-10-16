@@ -28,7 +28,7 @@ lightargs.set_usage("welcome to lightargs example !")
 lightargs.add( "doA",
                _doA,
                nb_args=2,
-               args_label=("a1","a2"),
+               args_labels=("a1","a2"),
                defaults=("default_a1","default_a2"),
                man="print 'A:' followed by a1 and a2 arguments",
                category="example")
@@ -37,7 +37,7 @@ lightargs.add( "doA",
 lightargs.add( "doB",
                _doB,
                nb_args=3,
-               args_label=("b1","b2","b3"),
+               args_labels=("b1","b2","b3"),
                defaults=("default_b1","default_b2","default_b3"),
                man="print 'B:' followed by b1, b2 and b3 arguments",
                category="example")
