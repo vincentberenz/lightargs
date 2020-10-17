@@ -14,7 +14,7 @@ setup( name='lightargs',
        author_email='vberenz@tuebingen.mpg.de',
        license='MIT',
        packages=['lightargs'],
-       install_requires=['argcomplete'],
+       install_requires=['argcomplete',"colorama"],
        zip_safe=True
 )
 
