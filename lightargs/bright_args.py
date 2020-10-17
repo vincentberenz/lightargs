@@ -1,5 +1,7 @@
 # Copyright 2020 @ Max Planck Gesellschaft
 
+from lightargs import lightcoloring as lc
+
 
 def _check_class(name,class_):
     if not isinstance(name,class_):
@@ -175,7 +177,8 @@ class BrightArgs:
                 skip = self._parse_single(args,index)
 
     def _print_option_help(self,name):
-        s = str("\t\t--{} ({}, default:{})\t{}{}")
+        name_str = "--"+name
+        s = str("\t\t{} ({}, default:{})\t{}{}")
         class_ = str(self._classes[name])
         if "'" in class_:
             class_ = class_[class_.find("'")+1:class_.rfind("'")]
@@ -184,7 +187,13 @@ class BrightArgs:
         if help_ is None:
             help_ = ""
         integrity_str = self._integrity_checks_str(name)
-        print(s.format(name,class_,default,help_,integrity_str))
+        print(lc.format(s,
+                        (name_str,lc.green,lc.bright),
+                        (class_,lc.cyan,lc.dim),
+                        (default,lc.cyan,lc.dim),
+                        (help_,lc.bright),
+                        (integrity_str,lc.cyan,lc.dim),
+                        default=(lc.cyan,lc.dim)))
 
     def _integrity_checks_str(self,name):
         integrity_checks = self._integrity_checks[name]
@@ -196,15 +205,18 @@ class BrightArgs:
         return "\n\t\t\t\t".join(r)
         
     def _print_operation_help(self,name):
-        s = str("\t\t-{}\t{}")
+        name_str = "-"+name
+        s = str("\t\t{}\t{}")
         help_ = self._helps[name]
         if help_ is None:
             help_ = ""
-        print(s.format(name,help_))
+        print(lc.format(s,
+                        (name_str,lc.green,lc.bright),
+                        (help_,lc.bright)))
                 
     def print_help(self):
         if self._help :
-              print("\n\t{}\n".format(self._help))
+              print(lc.format("\n\t{}\n",(self._help,lc.bright)))
         else:
               print("\n")
         for operation in self._operations:
