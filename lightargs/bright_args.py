@@ -45,6 +45,7 @@ class Range:
                         "(range:{})")
             raise ValueError(error.format(value,name,str(self)))
 
+        
 class Set:
     
     def __init__(self,*authorized):
@@ -60,6 +61,7 @@ class Set:
         if value not in self._authorized:
             error = str("{} not in authorized values ({})")
             raise ValueError(error.format(value,str(self)))
+
         
 class BrightArgs:
 
@@ -72,14 +74,22 @@ class BrightArgs:
         self._operations = set()
         self._defaults = {}
 
-    def __str__(self):
+    def _get_str(self,enum):
         r = ["\n"]
         args = sorted(self._options.union(self._operations))
-        for arg in args:
-            r.append("\t{}:\t{}".format(arg,getattr(self,arg)))
+        for index,arg in enumerate(args):
+            if enum :
+                r.append("\t{} | {}:\t{}".format(lc.format(str(index),lc.bright,lc.green),
+                                                 arg,
+                                                 lc.format(getattr(self,arg),lc.bright)))
+            else:
+                r.append("\t{}:\t{}".format(arg,getattr(self,arg)))
         r.append("\n")
         return "\n".join(r)
 
+    def __str__(self):
+        return self._get_str(enum=False)
+    
     def _dialog_operation(self,name):
         s = self._str_operation_help(name)
         print(s)
@@ -125,17 +135,56 @@ class BrightArgs:
                                     default=formating))
                     value=None
         return None
-            
-    def dialog(self):
-        for option in self._options:
-            value = self._dialog_option(option)
-            self._set_option_value(option,value)
-            print("\n")
-        for operation in self._operations:
-            value = self._dialog_operation(operation)
-            self._set_operation_value(operation,value)
-            print("\n")
-            
+
+    def _dialog_propose_defaults(self):
+        def _change_value(index):
+            args = sorted(self._options.union(self._operations))
+            arg = args[index]
+            if arg in self._options:
+                self._dialog_option(arg)
+            else:
+                self._dialog_operation(arg)
+        def _get_value():
+            print(self._get_str(True))
+            value = input(lc.format("\t\tuse these values ? [y,index to change]: "))
+            value = value.strip()
+            value = value.lower()
+            if value=='y':
+                return 
+            try:
+                index = int(value)
+            except:
+                raise ValueError()
+            if index<0 or index>=(len(self._options)+len(self._operations)):
+                raise ValueError()
+            return index
+        while True:
+            try :
+                v = _get_value()
+            except ValueError:
+                continue
+            except KeyboardInterrupt as ki:
+                raise ki
+            finally:
+                if isinstance(v,int):
+                    print("\n")
+                    _change_value(v)
+                else:
+                    return v
+                
+    def dialog(self,change_all):
+        if change_all:
+            for option in self._options:
+                value = self._dialog_option(option)
+                self._set_option_value(option,value)
+                print("\n")
+            for operation in self._operations:
+                value = self._dialog_operation(operation)
+                self._set_operation_value(operation,value)
+                print("\n")
+        else:
+            self._dialog_propose_defaults()
+                
     def _check_duplicate(self,arg_type,name):
         if name in self._help:
             error = str("{} {} added more than once")

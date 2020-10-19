@@ -11,6 +11,6 @@ bright.parse(["--operation1","-option1","3"])
 
 bright.print_status()
 
-bright.dialog()
+bright.dialog(False)
 
 bright.print_status()
