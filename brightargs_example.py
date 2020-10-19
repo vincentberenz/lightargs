@@ -10,3 +10,7 @@ bright.print_help()
 bright.parse(["--operation1","-option1","3"])
 
 bright.print_status()
+
+bright.dialog()
+
+bright.print_status()

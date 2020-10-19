@@ -79,6 +79,62 @@ class BrightArgs:
             r.append("\t{}:\t{}".format(arg,getattr(self,arg)))
         r.append("\n")
         return "\n".join(r)
+
+    def _dialog_operation(self,name):
+        s = self._str_operation_help(name)
+        print(s)
+        value = None
+        while value is None:
+            value = input(lc.format("\t\tuse ? (y,n,default:n): ",lc.bright))
+            value = value.lower()
+            value = value.strip()
+            if value in ('y','n'):
+                if value=='y':
+                    return True
+                if value=='n':
+                    return False
+            if value=='':
+                return False
+
+    def _dialog_option(self,name):
+        formating = (lc.bright,lc.red)
+        s = self._str_option_help(name)
+        print(s)
+        value = None
+        while value is None:
+            value = input(lc.format("\t\tenter value (default:{}): ",
+                                    (self._defaults[name],lc.bright,lc.green),
+                                    default=lc.bright))
+            value = value.strip()
+            if value=='':
+                value = self._defaults[name]
+                return value
+            try :
+                value = self._cast(name,value)
+            except ValueError as e:
+                print(lc.format("\t\t\t"+str(e),*formating))
+                value = None
+            if value is not None:
+                try :
+                    self._check_integrity(name,value)
+                    return value
+                except ValueError as e:
+                    print(lc.format("\t\t\tvalue {} was not accepted: {}",
+                                    (value,*formating),
+                                    (str(e),*formating),
+                                    default=formating))
+                    value=None
+        return None
+            
+    def dialog(self):
+        for option in self._options:
+            value = self._dialog_option(option)
+            self._set_option_value(option,value)
+            print("\n")
+        for operation in self._operations:
+            value = self._dialog_operation(operation)
+            self._set_operation_value(operation,value)
+            print("\n")
             
     def _check_duplicate(self,arg_type,name):
         if name in self._help:
@@ -104,6 +160,15 @@ class BrightArgs:
                 return arg[1:]
         return False
 
+    def _cast(self,name,value):
+        try:
+            value = self._classes[name](value)
+            return value
+        except:
+            error = "failed to cast {} to {} (option {})"
+            raise ValueError(error.format(value,
+                                          self._classes[name],name))
+    
     def _check_integrity(self,name,value):
         checks = self._integrity_checks[name]
         if not checks:
@@ -137,12 +202,7 @@ class BrightArgs:
         setattr(self,name,value)
         
     def _set_option_value(self,name,value):
-        try:
-            value = self._classes[name](value)
-        except:
-            error = "failed to cast {} to {} (option {})"
-            raise ValueError(error.format(value,
-                                          self._classes[name],name))
+        value = self._cast(name,value)
         self._check_integrity(name,value)
         setattr(self,name,value)
 
@@ -176,7 +236,7 @@ class BrightArgs:
             else:
                 skip = self._parse_single(args,index)
 
-    def _print_option_help(self,name):
+    def _str_option_help(self,name):
         name_str = "--"+name
         s = str("\t\t{} ({}, default:{})\t{}{}")
         class_ = str(self._classes[name])
@@ -187,14 +247,18 @@ class BrightArgs:
         if help_ is None:
             help_ = ""
         integrity_str = self._integrity_checks_str(name)
-        print(lc.format(s,
-                        (name_str,lc.green,lc.bright),
-                        (class_,lc.cyan,lc.dim),
-                        (default,lc.cyan,lc.dim),
-                        (help_,lc.bright),
-                        (integrity_str,lc.cyan,lc.dim),
-                        default=(lc.cyan,lc.dim)))
-
+        return lc.format(s,
+                         (name_str,lc.green,lc.bright),
+                         (class_,lc.cyan,lc.dim),
+                         (default,lc.cyan,lc.dim),
+                         (help_,lc.bright),
+                         (integrity_str,lc.cyan,lc.dim),
+                         default=(lc.cyan,lc.dim))
+    
+    def _print_option_help(self,name):
+        s = self._str_option_help(name)
+        print(s)
+        
     def _integrity_checks_str(self,name):
         integrity_checks = self._integrity_checks[name]
         if not integrity_checks :
@@ -204,16 +268,20 @@ class BrightArgs:
             r.append(ic.help())
         return "\n\t\t\t\t".join(r)
         
-    def _print_operation_help(self,name):
+    def _str_operation_help(self,name):
         name_str = "-"+name
         s = str("\t\t{}\t{}")
         help_ = self._helps[name]
         if help_ is None:
             help_ = ""
-        print(lc.format(s,
-                        (name_str,lc.green,lc.bright),
-                        (help_,lc.bright)))
-                
+        return lc.format(s,
+                         (name_str,lc.green,lc.bright),
+                         (help_,lc.bright))
+
+    def _print_operation_help(self,name):
+        s = self._str_operation_help(name)
+        print("\t\t"+s)
+        
     def print_help(self):
         if self._help :
               print(lc.format("\n\t{}\n",(self._help,lc.bright)))
