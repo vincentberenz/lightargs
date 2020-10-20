@@ -8,9 +8,11 @@ bright.print_help()
 
 
 bright.parse(["--operation1","-option1","3"])
-
 bright.print_status()
 
-bright.dialog(False)
-
+try :
+    bright.dialog(False)
+except KeyboardInterrupt:
+    pass
+    
 bright.print_status()

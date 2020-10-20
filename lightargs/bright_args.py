@@ -137,40 +137,56 @@ class BrightArgs:
         return None
 
     def _dialog_propose_defaults(self):
+        def _is_bool(v):
+            if type(v)==type(True):
+                return True
+        def _is_int(v):
+            if type(v)==type(1):
+                return True
         def _change_value(index):
             args = sorted(self._options.union(self._operations))
             arg = args[index]
             if arg in self._options:
-                self._dialog_option(arg)
+                value = self._dialog_option(arg)
+                self._set_option_value(arg,value)
             else:
-                self._dialog_operation(arg)
+                value = self._dialog_operation(arg)
+                self._set_operation_value(arg,value)
         def _get_value():
             print(self._get_str(True))
-            value = input(lc.format("\t\tuse these values ? [y,index to change]: "))
+            value = input(lc.format("\t\tuse these values ? [y,index to change,'h' for help]: "))
             value = value.strip()
             value = value.lower()
             if value=='y':
-                return 
+                return True
+            if value=='h':
+                return False
             try:
                 index = int(value)
             except:
-                raise ValueError()
+                raise ValueError(str(value))
             if index<0 or index>=(len(self._options)+len(self._operations)):
-                raise ValueError()
+                raise ValueError(index)
             return index
         while True:
             try :
                 v = _get_value()
-            except ValueError:
+            except ValueError as e:
+                print(lc.format("\t\t\tinvalid value: {}, accepted values: {}",
+                                (e,lc.bright),
+                                ("'y','h',index (int)",lc.bright),
+                                default=lc.red))
                 continue
             except KeyboardInterrupt as ki:
                 raise ki
-            finally:
-                if isinstance(v,int):
-                    print("\n")
-                    _change_value(v)
-                else:
+            if _is_int(v):
+                print("\n")
+                _change_value(v)
+            else:
+                if v:
                     return v
+                else:
+                    self.print_help()
                 
     def dialog(self,change_all):
         if change_all:
