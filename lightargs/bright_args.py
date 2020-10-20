@@ -28,7 +28,27 @@ class FileExists:
         if not os.access(value,os.R_OK):
             raise ValueError("{} is not readable",value)
 
-    
+
+class Positive:
+
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return "value must be positive"
+
+    def help(self):
+        return str(self)
+
+    def check(self,value):
+        try :
+            ok = value>=0
+        except TypeError:
+            raise ValueError("{} could not be compared with 0",value)
+        if not ok:
+            raise ValueError("{} must be positive",value)
+
+        
 class Range:
 
     def __init__(self,min_v,max_v):
@@ -173,7 +193,8 @@ class BrightArgs:
                 self._set_operation_value(arg,value)
         def _get_value():
             print(self._get_str(True))
-            value = input(lc.format("\t\tuse these values ? [y,index to change,'h' for help]: "))
+            value = input(lc.format("\t\tuse these values ? [y,index to change,'h' for help]: ",
+                                    lc.bright))
             value = value.strip()
             value = value.lower()
             if value=='y':
@@ -354,7 +375,7 @@ class BrightArgs:
         
     def _str_operation_help(self,name):
         name_str = "-"+name
-        s = str("\t\t{}\t{}")
+        s = str("{}\t{}")
         help_ = self._helps[name]
         if help_ is None:
             help_ = ""
@@ -374,7 +395,7 @@ class BrightArgs:
         for operation in self._operations:
             self._print_operation_help(operation)
         for option in self._options:
-              self._print_option_help(option)
+            self._print_option_help(option)
         print()
 
     def print_status(self):

@@ -1,4 +1,4 @@
-from lightargs import BrightArgs,Set,Range
+from lightargs import BrightArgs,Set,Range,Positive
 
 
 bright = BrightArgs("Welcome to BrightArgs example")

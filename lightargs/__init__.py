@@ -1,6 +1,6 @@
 # PYTHON_ARGCOMPLETE_OK
 
-from .bright_args import BrightArgs,Set,Range
+from .bright_args import BrightArgs,Set,Range,Positive,FileExists
 
 from .argument import _Argument
 
