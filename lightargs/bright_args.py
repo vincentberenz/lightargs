@@ -1,5 +1,6 @@
 # Copyright 2020 @ Max Planck Gesellschaft
 
+import os
 from lightargs import lightcoloring as lc
 
 
@@ -10,6 +11,24 @@ def _check_class(name,class_):
         raise TypeError(error.format(name,class_,name.__class__))
 
 
+class FileExists:
+
+    def __init__(self):
+        pass
+        
+    def __str__(self):
+        return "checks if the file exists"
+
+    def help(self):
+        return str(self)
+        
+    def check(self,value):
+        if not os.path.isfile(value):
+            raise ValueError("{} could not be found",value)
+        if not os.access(value,os.R_OK):
+            raise ValueError("{} is not readable",value)
+
+    
 class Range:
 
     def __init__(self,min_v,max_v):
