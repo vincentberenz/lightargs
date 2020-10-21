@@ -66,23 +66,23 @@ class Range:
         try :
             smaller = value < self._min_v
         except:
-            error = str("failed to compare value {} (option {})"+
+            error = str("failed to compare value {}"+
                         " with range {}")
-            raise ValueError(error.format(value,name,str(self)))
+            raise ValueError(error.format(value,str(self)))
         if smaller:
-            error = str("value {} for option {} is too small "+
+            error = str("value {} is too small "+
                         "(range:{})")
-            raise ValueError(error.format(value,name,str(self)))
+            raise ValueError(error.format(value,str(self)))
         try :
             bigger = value > self._max_v
         except:
-            error = str("failed to compare value {} (option {})"+
+            error = str("failed to compare value {}"+
                         " with range {}")
-            raise ValueError(error.format(value,name,str(self)))
+            raise ValueError(error.format(value,str(self)))
         if bigger:
-            error = str("value {} for option {} is too big "+
+            error = str("value {} is too big "+
                         "(range:{})")
-            raise ValueError(error.format(value,name,str(self)))
+            raise ValueError(error.format(value,str(self)))
 
         
 class Set:
