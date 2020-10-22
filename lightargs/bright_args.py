@@ -134,7 +134,7 @@ class BrightArgs:
         print(s)
         value = None
         while value is None:
-            value = input(lc.format("\t\tuse ? (y,n,default:n): ",lc.bright))
+            value = input(lc.format("\t\tuse ? (y, n, default:n): ",lc.bright))
             value = value.lower()
             value = value.strip()
             if value in ('y','n'):
@@ -193,7 +193,7 @@ class BrightArgs:
                 self._set_operation_value(arg,value)
         def _get_value():
             print(self._get_str(True))
-            value = input(lc.format("\t\tuse these values ? [y,index to change,'h' for help]: ",
+            value = input(lc.format("\t\tuse these values ? ['y', index to change, 'h' for help]: ",
                                     lc.bright))
             value = value.strip()
             value = value.lower()
@@ -226,9 +226,13 @@ class BrightArgs:
                 if v:
                     return v
                 else:
+                    print()
                     self.print_help()
                 
-    def dialog(self,change_all):
+    def dialog(self,change_all,args=None):
+        if args is not None:
+            self.parse()
+            return
         if change_all:
             for option in self._options:
                 value = self._dialog_option(option)
