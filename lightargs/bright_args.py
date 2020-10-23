@@ -104,6 +104,8 @@ class Set:
         
 class BrightArgs:
 
+    help_args = ("-h","help","-help","--h","--help")
+    
     def __init__(self,help_str):
         self._help = help_str
         self._helps = {}
@@ -230,9 +232,17 @@ class BrightArgs:
                     self.print_help()
                 
     def dialog(self,change_all,args=None):
-        if args is not None:
-            self.parse()
-            return
+        if args :
+            try :
+                done = self.parse(args)
+                if not done:
+                    return False
+            except ValueError as e:
+                print()
+                print(lc.format(e,lc.bright,lc.red))
+                print()
+                return False
+            return True
         if change_all:
             for option in self._options:
                 value = self._dialog_option(option)
@@ -242,11 +252,18 @@ class BrightArgs:
                 value = self._dialog_operation(operation)
                 self._set_operation_value(operation,value)
                 print("\n")
+            return True
         else:
-            self._dialog_propose_defaults()
+            try :
+                self._dialog_propose_defaults()
+            except KeyboardInterrupt:
+                return False
+            return True
                 
     def _check_duplicate(self,arg_type,name):
-        if name in self._help:
+        if name in self.help_args:
+            error = str("{} is reserved and can not be used".format(name))
+        if name in self._helps:
             error = str("{} {} added more than once")
             raise ValueError(error.format(arg_type,name))
         
@@ -316,10 +333,10 @@ class BrightArgs:
         setattr(self,name,value)
 
     def _complain_unknown(self,unknown):
-        error = "unkown argument: {}. Known arguments: {}"
-        known_options = ",".join(["--"+o for o in self._options])
-        known_operations = ",".join(["-"+o for o in self._operations])
-        known_arguments = ",".join([known_options,known_operations])
+        error = "unkown argument: {}.\nKnown arguments: {}"
+        known_options = ", ".join(["-"+o for o in self._options])
+        known_operations = ", ".join(["--"+o for o in self._operations])
+        known_arguments = ", ".join([known_options,known_operations])
         raise ValueError(error.format(unknown,known_arguments))
         
     def _parse_single(self,args,index):
@@ -338,15 +355,19 @@ class BrightArgs:
         self._complain_unknown(args[index])
         
     def parse(self,args):
+        if any([arg in self.help_args for arg in args]):
+            self.print_help()
+            return False
         skip=False
         for index in range(len(args)):
             if skip:
                 skip=False
             else:
                 skip = self._parse_single(args,index)
-
+        return True
+                
     def _str_option_help(self,name):
-        name_str = "--"+name
+        name_str = "-"+name
         s = str("\t\t{} ({}, default:{})\t{}{}")
         class_ = str(self._classes[name])
         if "'" in class_:
@@ -378,7 +399,7 @@ class BrightArgs:
         return "\n\t\t\t\t".join(r)
         
     def _str_operation_help(self,name):
-        name_str = "-"+name
+        name_str = "--"+name
         s = str("{}\t{}")
         help_ = self._helps[name]
         if help_ is None:
