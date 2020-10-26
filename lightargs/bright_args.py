@@ -342,7 +342,7 @@ class BrightArgs:
     def _parse_single(self,args,index):
         operation = self._is_operation(args[index])
         if operation:
-            self._set_operation_value(args[index],True)
+            self._set_operation_value(operation,True)
             return False # do not skip next argment
         option = self._is_option(args[index])
         if option:
