@@ -89,6 +89,11 @@ class Set:
     
     def __init__(self,*authorized):
         self._authorized = authorized
+        print(authorized,authorized.__class__)
+        print(self._authorized,self._authorized.__class__,
+              self._authorized[0].__class__,"|"+str(self._authorized[0])+"|")
+
+
 
     def __str__(self):
         return ",".join([str(a) for a in self._authorized])
@@ -100,6 +105,21 @@ class Set:
         if value not in self._authorized:
             error = str("{} not in authorized values ({})")
             raise ValueError(error.format(value,str(self)))
+
+
+class CanEval:
+    def __init__(self):
+        pass
+    def __str__(self):
+        return "check the value can be python evaluated"
+    def help(self):
+        return str(self)
+    def check(self,value):
+        try :
+            eval(value)
+        except Exception as e:
+            raise ValueError("failed to (python) evaluate: {} ({})".format(value,
+                                                                           e))
 
         
 class BrightArgs:
