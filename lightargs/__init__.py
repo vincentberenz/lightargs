@@ -168,7 +168,7 @@ def execute(args):
 
         known_args = [
             k for k,
-            v in _ARGUMENTS.iteritems() if v.category != _HIDDEN]
+            v in _ARGUMENTS.items() if v.category != _HIDDEN]
 
         raise UnknownArgument(
             "unknown command: " +
